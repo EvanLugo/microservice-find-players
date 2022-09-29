@@ -5,9 +5,18 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async: '%messenger_transport_dsn%'
             # failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
+
+            external_messages:
+                dsn: '%messenger_transport_dsn%'
+                serializer: App\Messenger\ExternalJsonMessengerSerializer
+                options:
+                    auto_setup: false
+                    queues:
+                        messages_symfony_app:
+                            binding_keys: [from_external]
 
         routing:
             # Route your messages to the transports
