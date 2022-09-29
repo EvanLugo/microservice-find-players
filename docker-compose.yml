@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  ms-players:
+    container_name: ms-players
+    ports:
+      - '801:80'
+    image: ubuntu-php7.1
+    volumes:
+    - ./symfony:/var/www/html/symfony
+    build: .
+    links:
+      - mysql:database
+    networks:
+      - ms-players-network
+    env_file:
+      - .env
+
+  mysql:
+    container_name: ms-players-db
+    ports:
+      - '3301:3306'
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ms-players-db:/var/lib/mysql
+    networks:
+      - ms-players-network
+
+volumes:
+  ms-players-db:
+
+networks:
+  ms-players-network:
