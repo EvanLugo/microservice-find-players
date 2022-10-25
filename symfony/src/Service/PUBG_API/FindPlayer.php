@@ -30,6 +30,6 @@ class FindPlayer
         );
 
         $response = json_decode($response->getContent(), true);
-        dd($response);
+        return $response['data'];
     }
 }
