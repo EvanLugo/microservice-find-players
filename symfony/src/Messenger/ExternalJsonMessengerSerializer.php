@@ -3,8 +3,8 @@
 namespace App\Messenger;
 
 use App\Message\Message;
+use App\Message\PUBG\FindPlayer;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class ExternalJsonMessengerSerializer implements SerializerInterface
@@ -14,10 +14,13 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
      */
     public function decode(array $encodedEnvelope): Envelope
     {
-        $headers = $encodedEnvelope['headers'];
         $body = $encodedEnvelope['body'];
-
         $message = json_decode($body, true);
+
+        if (array_key_exists('playerName', $message) && array_key_exists('platform', $message)) {
+            return new Envelope(new FindPlayer($message['playerName'], $message['platform']));
+        }
+
         $message = new Message($message['message']);
 
         return new Envelope($message);
@@ -28,6 +31,6 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
      */
     public function encode(Envelope $envelope): array
     {
-        // TODO: Implement encode() method.
+        return [];
     }
 }
