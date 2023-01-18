@@ -2,6 +2,7 @@
 
 namespace App\Messenger;
 
+use Exception;
 use App\Message\Message;
 use App\Message\PUBG\FindPlayer;
 use Symfony\Component\Messenger\Envelope;
@@ -35,6 +36,28 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
      */
     public function encode(Envelope $envelope): array
     {
-        return [];
+        // this is called if a message is redelivered for "retry"
+        $message = $envelope->getMessage();
+        // expand this logic later if you handle more than
+        // just one message class
+        if ($message instanceof FindPlayer) {
+            // recreate what the data originally looked like
+            $data = ['playerName' => $message->getName(), 'platform' => $message->getPlatform()];
+        } else {
+            throw new Exception('Unsupported message class');
+        }
+
+        $allStamps = [];
+        foreach ($envelope->all() as $stamps) {
+            $allStamps = array_merge($allStamps, $stamps);
+        }
+        
+        return [
+            'body' => json_encode($data),
+            'headers' => [
+                // store stamps as a header - to be read in decode()
+                'stamps' => serialize($allStamps)
+            ],
+        ];
     }
 }

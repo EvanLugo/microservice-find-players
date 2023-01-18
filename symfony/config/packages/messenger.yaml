@@ -11,12 +11,12 @@ framework:
 
             external_messages:
                 dsn: '%messenger_transport_dsn%'
+                retry_strategy:
+                    delay: 200
                 serializer: App\Messenger\ExternalJsonMessengerSerializer
                 options:
-                    auto_setup: false
                     queues:
-                        messages_symfony_app:
-                            binding_keys: [from_external]
+                        messages_symfony_app: ~
 
         routing:
             # Route your messages to the transports

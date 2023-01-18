@@ -27,6 +27,6 @@ class FindPlayerHandler implements MessageHandlerInterface
             $playerInfo[0]['attributes']['shardId']
         );
 
-        dd($player);
+        var_dump($player);
     }
 }
